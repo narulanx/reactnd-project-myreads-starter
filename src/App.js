@@ -23,6 +23,16 @@ class BooksApp extends React.Component {
     }
   }
 
+  moveBook = (book, newShelf) => {
+    this.setState((state) => {
+      const bookIndex = this.state.shelves[book.shelf].books.indexOf(book)
+      state.shelves[book.shelf].books.splice(bookIndex, 1)
+      state.shelves[newShelf].books.push(book)
+      book.shelf = newShelf
+    })
+
+  }
+
   componentDidMount() {
     BooksAPI.getAll().then((data) => {
       data.forEach((book) => {
@@ -38,7 +48,8 @@ class BooksApp extends React.Component {
       <div className="app">
         <Route exact path="/" render={() => (
           <BookShelves 
-            booksInShelves={this.state.shelves} />
+            booksInShelves={this.state.shelves}
+            onMoveBook={this.moveBook} />
         )} />
         <Route path="/search" component={SearchBook} />
       </div>
