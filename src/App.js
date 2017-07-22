@@ -30,7 +30,7 @@ class BooksApp extends React.Component {
       state.shelves[newShelf].books.push(book)
       book.shelf = newShelf
     })
-
+    BooksAPI.update(book, newShelf)
   }
 
   componentDidMount() {
