@@ -13,7 +13,7 @@ class BookShelves extends React.Component {
         </div>
         <div className="list-books-content">
           <div>
-            { shelves.map((shelf,index) => (
+            { shelves.filter((shelf) => shelf !== 'none').map((shelf,index) => (
               <div key={index} className="bookshelf">
                 <h2 className="bookshelf-title">{booksInShelves[shelf].name}</h2>
                 <div className="bookshelf-books">
@@ -27,10 +27,9 @@ class BookShelves extends React.Component {
                             <div className="book-shelf-changer">
                               <select value={book.shelf} onChange={(event) => onMoveBook(book, event.target.value)}>
                                 <option value="none" disabled>Move to...</option>
-                                <option value="currentlyReading">Currently Reading</option>
-                                <option value="wantToRead">Want to Read</option>
-                                <option value="read">Read</option>
-                                <option value="none">None</option>
+                                { shelves.map((bookshelf, i) => (
+                                  <option key={i} value={bookshelf}>{booksInShelves[bookshelf].name}</option>
+                                ))}
                               </select>
                             </div>
                           </div>

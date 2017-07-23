@@ -6,6 +6,8 @@ import BookShelves from './BookShelves'
 import './App.css'
 
 class BooksApp extends React.Component {
+  static MAX_RESULTS = 20
+
   state = {
     shelves: {
       currentlyReading: {
@@ -19,8 +21,13 @@ class BooksApp extends React.Component {
       read: {
         name: 'Read',
         books: []
+      },
+      none: {
+        name: 'None',
+        books: []
       }
-    }
+    },
+    searchedBooks: []
   }
 
   moveBook = (book, newShelf) => {
@@ -31,6 +38,26 @@ class BooksApp extends React.Component {
       book.shelf = newShelf
     })
     BooksAPI.update(book, newShelf)
+  }
+
+  searchBooks = (query) => {
+    if (query === '') {
+      this.setState((state) => {
+        state.searchedBooks = []
+      })
+    } else {
+      BooksAPI.search(query, this.MAX_RESULTS).then((data) => {
+        if (data.length > 0) {
+          this.setState((state) => {
+            state.searchedBooks = data
+          })
+        } else {
+          this.setState((state) => {
+            state.searchedBooks = []
+          })
+        }
+      })
+    }
   }
 
   componentDidMount() {
@@ -44,14 +71,20 @@ class BooksApp extends React.Component {
   }
 
   render() {
+    const { shelves, searchedBooks } = this.state
     return (
       <div className="app">
         <Route exact path="/" render={() => (
           <BookShelves 
-            booksInShelves={this.state.shelves}
+            booksInShelves={shelves}
             onMoveBook={this.moveBook} />
         )} />
-        <Route path="/search" component={SearchBook} />
+        <Route path="/search" render={() => (
+          <SearchBook 
+            searchedBooks={searchedBooks}
+            onMoveBook={this.moveBook}
+            onSearchBooks={this.searchBooks} />
+        )} />
       </div>
     )
   }
