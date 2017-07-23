@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 
 class BookShelves extends React.Component {
 
+  // Render function to display the books in shelves using the properties passed from App.js
   render() {
     const { booksInShelves, onMoveBook } = this.props
     const shelves = Object.keys(booksInShelves)

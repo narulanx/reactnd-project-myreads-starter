@@ -2,10 +2,13 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 class SearchBook extends React.Component {
+  // Lifecycle event - invoked immediately after the component is mounted
+  // Reset the searched books to empty array if the search page is clicked again
   componentDidMount() {
     this.props.onSearchBooks('')
   }
 
+  // Render function to display the searhed books based on entered query
   render() {
     const { searchedBooks, onMoveBook, onSearchBooks } = this.props
     return (

@@ -30,6 +30,11 @@ class BooksApp extends React.Component {
     searchedBooks: []
   }
 
+ /**
+  * @description Move book from one state to another, and update the same in the backend call
+  * @param {object} book the book object to be moved
+  * @param {string} newShelf the new bookshelf where the book needs to be moved
+  */
   moveBook = (book, newShelf) => {
     this.setState((state) => {
       const bookIndex = this.state.shelves[book.shelf].books.indexOf(book)
@@ -40,8 +45,13 @@ class BooksApp extends React.Component {
     BooksAPI.update(book, newShelf)
   }
 
+ /**
+  * @description Search books based on query
+  * @param {string} query the query strin to perform search
+  */
   searchBooks = (query) => {
     const state = this.state
+    // Remove all the books if the query string text is removed
     if (query === '') {
       this.setState((state) => {
         state.searchedBooks = []
@@ -50,18 +60,22 @@ class BooksApp extends React.Component {
       BooksAPI.search(query, this.MAX_RESULTS).then((data) => {
         if (data.length > 0) {
           data.map((book) => {
+            // Check each searched book in the 'currently reading' shelf and update shelf value if found
             const currentlyReadingCheck = state.shelves.currentlyReading.books.filter((shelfBook) => (shelfBook.id === book.id))
             if (currentlyReadingCheck.length > 0) {
               book.shelf = currentlyReadingCheck[0].shelf
             } else {
+              // If not, check the book in 'want to read' shelf and update if found
               const wantToReadCheck = state.shelves.wantToRead.books.filter((shelfBook) => (shelfBook.id === book.id)) 
               if (wantToReadCheck.length > 0) {
                 book.shelf = wantToReadCheck[0].shelf
               } else {
+                // If not, check the book in 'read' shelf and update if found
                 const readCheck = state.shelves.read.books.filter((shelfBook) => (shelfBook.id === book.id))
                 if (readCheck.length > 0) {
                   book.shelf = readCheck[0].shelf
                 } else {
+                  // if book is not found in any shelf, mark the shelf as 'none'
                   book.shelf = 'none'
                 }
               }
@@ -80,6 +94,8 @@ class BooksApp extends React.Component {
     }
   }
 
+  // Lifecycle event - invoked immediately after the component is mounted
+  // get the list of books to be displayed in shelf on main page and update the state
   componentDidMount() {
     BooksAPI.getAll().then((data) => {
       data.forEach((book) => {
@@ -90,6 +106,7 @@ class BooksApp extends React.Component {
     })
   }
 
+ // Render function that renders 2 child components BookShelves and SearchBook
   render() {
     const { shelves, searchedBooks } = this.state
     return (
