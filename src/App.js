@@ -41,6 +41,7 @@ class BooksApp extends React.Component {
   }
 
   searchBooks = (query) => {
+    const state = this.state
     if (query === '') {
       this.setState((state) => {
         state.searchedBooks = []
@@ -48,6 +49,25 @@ class BooksApp extends React.Component {
     } else {
       BooksAPI.search(query, this.MAX_RESULTS).then((data) => {
         if (data.length > 0) {
+          data.map((book) => {
+            const currentlyReadingCheck = state.shelves.currentlyReading.books.filter((shelfBook) => (shelfBook.id === book.id))
+            if (currentlyReadingCheck.length > 0) {
+              book.shelf = currentlyReadingCheck[0].shelf
+            } else {
+              const wantToReadCheck = state.shelves.wantToRead.books.filter((shelfBook) => (shelfBook.id === book.id)) 
+              if (wantToReadCheck.length > 0) {
+                book.shelf = wantToReadCheck[0].shelf
+              } else {
+                const readCheck = state.shelves.read.books.filter((shelfBook) => (shelfBook.id === book.id))
+                if (readCheck.length > 0) {
+                  book.shelf = readCheck[0].shelf
+                } else {
+                  book.shelf = 'none'
+                }
+              }
+            }
+            return book
+          })
           this.setState((state) => {
             state.searchedBooks = data
           })

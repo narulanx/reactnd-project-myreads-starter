@@ -2,6 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 class SearchBook extends React.Component {
+  componentDidMount() {
+    this.props.onSearchBooks('')
+  }
+
   render() {
     const { searchedBooks, onMoveBook, onSearchBooks } = this.props
     return (
@@ -35,7 +39,7 @@ class SearchBook extends React.Component {
                           style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>}
                       <div className="book-shelf-changer">
                         <select value={book.shelf} onChange={(event) => onMoveBook(book, event.target.value)}>
-                          <option value="none" disabled>Move to...</option>
+                          <option value="" disabled>Move to...</option>
                           <option value="currentlyReading">Currently Reading</option>
                           <option value="wantToRead">Want to Read</option>
                           <option value="read">Read</option>
